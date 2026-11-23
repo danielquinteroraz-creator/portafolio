@@ -34,7 +34,7 @@ const projects = [
   },
   {
     slug: 'cambio-de-llaves', name: 'CAMBIO DE LLAVES', sector: ['Automoción · Colombia', 'Automotive · Colombia'],
-    tags: ['Three.js', 'Android', ['Simuladores', 'Calculators']], languages: 'ES',
+    tags: ['Three.js', 'Android', ['Simuladores', 'Calculators']], languages: 'EN / ES',
     colors: [['Azul eléctrico', 'Electric blue', '#1636FF'], ['Blanco papel', 'Paper white', '#F7F7F4'], ['Negro', 'Black', '#0B0B0C']], accent: '#1636FF',
     fonts: 'Archivo (variable) + IBM Plex Mono', tech: 'Three.js · Android (APK)',
     live: 'https://cambio-de-llaves.netlify.app', code: 'cambio-de-llaves', apk: 'cambio-de-llaves-app',

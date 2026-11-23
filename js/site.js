@@ -7,10 +7,12 @@
   const valid = (value) => value === 'es' || value === 'en';
   const initial = new URL(location.href).searchParams.get('lang');
   const copy = {
-    es: { brand: 'Portafolio', greeting: 'Hola, me gustaría hablar sobre un proyecto.', empty: 'Completa este campo.', opened: 'Continúa la conversación en el canal que elegiste.' },
-    en: { brand: 'Portfolio', greeting: 'Hi, I’d like to discuss a project.', empty: 'Please complete this field.', opened: 'Continue the conversation in your chosen channel.' }
+    es: { brand: 'Portafolio', subject: 'Consulta sobre un proyecto', greeting: 'Hola, me gustaría hablar sobre un proyecto.', empty: 'Completa este campo.', opened: 'Continúa la conversación en el canal que elegiste.' },
+    en: { brand: 'Portfolio', subject: 'Project inquiry', greeting: 'Hi, I’d like to discuss a project.', empty: 'Please complete this field.', opened: 'Continue the conversation in your chosen channel.' }
   };
   let language;
+  const email = config.email.join('@');
+  const mail = (body) => 'mailto:' + email + '?subject=' + encodeURIComponent(copy[language].subject) + (body ? '&body=' + encodeURIComponent(body) : '');
   const wa = (number, body) => 'https://wa.me/' + number + '?text=' + encodeURIComponent(body);
   const currentProject = projects.find((project) => project.slug === document.body.dataset.project);
   all('[data-en]').forEach((node) => { node.dataset.es = node.textContent; });
@@ -48,6 +50,12 @@
     by('meta[property="og:title"]').content = document.title;
     by('meta[property="og:description"]').content = description.content;
     by('meta[property="og:locale"]').content = lang === 'en' ? 'en_US' : 'es_ES';
+    const emailLink = by('[data-email]');
+    if (emailLink) {
+      emailLink.textContent = email;
+      emailLink.href = mail();
+      emailLink.hidden = false;
+    }
     all('[data-wa]').forEach((anchor) => {
       const contact = config.whatsapp[Number(anchor.dataset.wa)];
       anchor.href = wa(contact.number, copy[lang].greeting);
@@ -111,7 +119,8 @@
         const value = field.selectedOptions ? field.selectedOptions[0].textContent : field.value.trim();
         return label + ': ' + value;
       }).join('\n\n');
-      window.open(wa(config.whatsapp[0].number, copy[language].greeting + '\n\n' + body), '_blank', 'noopener,noreferrer');
+      if (event.submitter?.value === 'email') location.href = mail(body);
+      else window.open(wa(config.whatsapp[0].number, copy[language].greeting + '\n\n' + body), '_blank', 'noopener,noreferrer');
       state.textContent = copy[language].opened;
     });
   }

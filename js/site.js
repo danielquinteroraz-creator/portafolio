@@ -69,7 +69,7 @@
     error.textContent = invalid ? copy[language].empty : '';
   }
 
-  setLanguage(valid(initial) ? initial : valid(readPreference()) ? readPreference() : 'es');
+  setLanguage(valid(initial) ? initial : valid(readPreference()) ? readPreference() : 'en');
   if (valid(initial)) {
     try { localStorage.setItem('portfolio-language', initial); } catch {}
   }

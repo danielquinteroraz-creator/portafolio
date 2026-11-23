@@ -6,13 +6,11 @@
   };
   const valid = (value) => value === 'es' || value === 'en';
   const initial = new URL(location.href).searchParams.get('lang');
-  const email = config.email.join('@');
   const copy = {
-    es: { brand: 'Portafolio', subject: 'Consulta sobre un proyecto', greeting: 'Hola, me gustaría hablar sobre un proyecto.', empty: 'Completa este campo.', opened: 'Continúa la conversación en el canal que elegiste.' },
-    en: { brand: 'Portfolio', subject: 'Project inquiry', greeting: 'Hi, I’d like to discuss a project.', empty: 'Please complete this field.', opened: 'Continue the conversation in your chosen channel.' }
+    es: { brand: 'Portafolio', greeting: 'Hola, me gustaría hablar sobre un proyecto.', empty: 'Completa este campo.', opened: 'Continúa la conversación en el canal que elegiste.' },
+    en: { brand: 'Portfolio', greeting: 'Hi, I’d like to discuss a project.', empty: 'Please complete this field.', opened: 'Continue the conversation in your chosen channel.' }
   };
   let language;
-  const mail = (body) => 'mailto:' + email + '?subject=' + encodeURIComponent(copy[language].subject) + (body ? '&body=' + encodeURIComponent(body) : '');
   const wa = (number, body) => 'https://wa.me/' + number + '?text=' + encodeURIComponent(body);
   const currentProject = projects.find((project) => project.slug === document.body.dataset.project);
   all('[data-en]').forEach((node) => { node.dataset.es = node.textContent; });
@@ -50,19 +48,10 @@
     by('meta[property="og:title"]').content = document.title;
     by('meta[property="og:description"]').content = description.content;
     by('meta[property="og:locale"]').content = lang === 'en' ? 'en_US' : 'es_ES';
-    const emailLink = by('[data-email]');
-    if (emailLink) {
-      emailLink.textContent = email;
-      emailLink.href = mail();
-      emailLink.hidden = false;
-    }
     all('[data-wa]').forEach((anchor) => {
       const contact = config.whatsapp[Number(anchor.dataset.wa)];
       anchor.href = wa(contact.number, copy[lang].greeting);
       anchor.textContent = 'WhatsApp · ' + contact[lang] + ' · ' + contact.display;
-    });
-    all('[data-wa-option]').forEach((option) => {
-      option.textContent = config.whatsapp[Number(option.value)][lang];
     });
     if (form) {
       Array.from(form.elements).forEach((field) => {
@@ -122,12 +111,7 @@
         const value = field.selectedOptions ? field.selectedOptions[0].textContent : field.value.trim();
         return label + ': ' + value;
       }).join('\n\n');
-      if (event.submitter?.value === 'whatsapp') {
-        const recipient = config.whatsapp[Number(by('#wa-recipient').value)];
-        window.open(wa(recipient.number, copy[language].greeting + '\n\n' + body), '_blank', 'noopener,noreferrer');
-      } else {
-        location.href = mail(body);
-      }
+      window.open(wa(config.whatsapp[0].number, copy[language].greeting + '\n\n' + body), '_blank', 'noopener,noreferrer');
       state.textContent = copy[language].opened;
     });
   }
